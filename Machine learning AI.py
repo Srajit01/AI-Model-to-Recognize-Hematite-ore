@@ -11,7 +11,6 @@ Original file is located at
 
 !pip install tensorflow
 
-# Install other required libraries
 !pip install keras
 !pip install efficientnet
 !pip install numpy
@@ -30,21 +29,21 @@ drive.mount('/content/drive')
 
 data_dir = '/content/drive/MyDrive/Dataset'
 import os
-print(os.path.exists(data_dir))  # This should print True if the directory exists
+print(os.path.exists(data_dir))  
 train_dir = data_dir + '/train'
 val_dir = data_dir + '/val'
 test_dir = data_dir + '/test'
 
-print(os.path.exists(train_dir))  # Should be True if the path is correct
-print(os.path.exists(val_dir))    # Should be True if the path is correct
-print(os.path.exists(test_dir))   # Should be True if the path is correct
+print(os.path.exists(train_dir))  
+print(os.path.exists(val_dir))    
+print(os.path.exists(test_dir))   
 
-# List contents to verify structure
+
 print("Train contents:", os.listdir(train_dir))
 print("Validation contents:", os.listdir(val_dir))
 print("Test contents:", os.listdir(test_dir))
 
-# Data preprocessing and augmentation
+
 train_datagen = ImageDataGenerator(
     rescale=1./255,
     rotation_range=20,
@@ -59,7 +58,7 @@ train_datagen = ImageDataGenerator(
 val_datagen = ImageDataGenerator(rescale=1./255)
 test_datagen = ImageDataGenerator(rescale=1./255)
 
-# Load data generators
+
 train_generator = train_datagen.flow_from_directory(
     train_dir,
     target_size=(224, 224),
@@ -81,7 +80,7 @@ test_generator = test_datagen.flow_from_directory(
     class_mode='binary'
 )
 
-# Transfer learning with EfficientNetB0
+
 base_model = EfficientNetB0(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
 x = base_model.output
 x = GlobalAveragePooling2D()(x)
@@ -91,7 +90,7 @@ output = Dense(1, activation='sigmoid')(x)
 
 model = Model(inputs=base_model.input, outputs=output)
 
-# Fine-tune last few layers
+
 for layer in base_model.layers[:-5]:
     layer.trainable = True
 
@@ -101,32 +100,6 @@ epochs = 20
 steps_per_epoch = len(train_generator)
 val_steps = len(val_generator)
 
-# from tensorflow.keras import layers, models
-
-# # Assuming image dimensions and other hyperparameters are defined appropriately
-# image_height = 128
-# image_width = 128
-# channels = 3  # Assuming RGB images
-# num_epochs = 20  # You can adjust this based on your training results
-
-
-# # Define the CNN model
-# model = models.Sequential([
-#     layers.Conv2D(32, (3, 3), activation='relu', input_shape=(image_height, image_width, channels)),
-#     layers.MaxPooling2D((2, 2)),
-#     layers.Conv2D(64, (3, 3), activation='relu'),
-#     layers.MaxPooling2D((2, 2)),
-#     layers.Conv2D(128, (3, 3), activation='relu'),
-#     layers.MaxPooling2D((2, 2)),
-#     layers.Flatten(),
-#     layers.Dense(128, activation='relu'),
-#     layers.Dense(1, activation='sigmoid')  # Output layer with sigmoid activation for binary classification
-# ])
-
-# # Compile the model
-# model.compile(optimizer='adam',
-#               loss='binary_crossentropy',
-#               metrics=['accuracy'])
 
 print("Train generator samples:", train_generator.samples)
 print("Val generator samples:", val_generator.samples)
@@ -148,7 +121,6 @@ print(f'Test accuracy: {test_acc * 100:.2f}%')
 
 import os
 
-# Save the compiled model
 model.save('model.h5')
 
 # Print the location where the model is saved
@@ -167,18 +139,6 @@ file_name = next(iter(uploaded))
 # Display the uploaded image
 display(Image(filename=file_name))
 
-# # Function to load, preprocess, and predict a single image
-# def predict_image(image_path):
-#     img = load_and_preprocess_image(image_path)
-#     prediction = model.predict(img)
-#     if prediction[0][0] > 0.5:
-#         print("hematite")
-#         print(prediction[0][0])
-#     else:
-#         print("not-hematite")
-#         print(prediction[0][0])
-
-# Function to load and preprocess a single image (unchanged)
 def load_and_preprocess_image(image_path):
     img = load_img(image_path, target_size=(224, 224))
     img_array = img_to_array(img)
@@ -196,8 +156,8 @@ def predict_image(image_path):
         print("not-hematite")
         print(prediction[0][0])
 
-# Usage example for manual testing
-image_path = file_name  # Use the uploaded image file path
+
+image_path = file_name  
 predict_image(image_path)
 
 image_path = '/content/drive/MyDrive/Dataset/Hematite ore/Image_158.jpg'
